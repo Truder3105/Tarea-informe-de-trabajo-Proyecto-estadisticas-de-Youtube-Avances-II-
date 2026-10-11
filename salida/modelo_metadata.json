@@ -1,0 +1,32 @@
+{
+  "modelo": "Híbrido B + TF-IDF + Ridge",
+  "entrada": [
+    "n_com",
+    "sent_mean",
+    "sent_std",
+    "pos_share",
+    "neg_share",
+    "neu_share",
+    "sent_w",
+    "clike_mean",
+    "clike_max",
+    "len_mean",
+    "words_mean",
+    "vader_mean",
+    "vader_std",
+    "q_share",
+    "excl_share",
+    "upper_share",
+    "age_days",
+    "title_len",
+    "title_vader",
+    "title_q",
+    "Keyword",
+    "text"
+  ],
+  "objetivo": "log1p(Views)",
+  "fecha": "2026-10-10",
+  "rmse_cv": 1.221594104737894,
+  "r2_cv": 0.7573085675859071,
+  "semilla": 42
+}
