@@ -1,0 +1,47 @@
+{
+  "modelo": "XGBoost + nuevas",
+  "entrada": [
+    "n_com",
+    "sent_mean",
+    "sent_std",
+    "pos_share",
+    "neg_share",
+    "neu_share",
+    "sent_w",
+    "clike_mean",
+    "clike_max",
+    "len_mean",
+    "words_mean",
+    "vader_mean",
+    "vader_std",
+    "q_share",
+    "excl_share",
+    "upper_share",
+    "age_days",
+    "title_len",
+    "title_vader",
+    "title_q",
+    "vader_max",
+    "vader_min",
+    "strong_pos",
+    "strong_neg",
+    "lex_div",
+    "emoji_share",
+    "Keyword"
+  ],
+  "objetivo": "log1p(Views)",
+  "rmse_cv": 1.1908479623865562,
+  "r2_cv": 0.7690632233655172,
+  "fecha": "2026-10-17",
+  "semilla": 42,
+  "entorno": {
+    "python": "3.14.7",
+    "scikit-learn": "1.9.1",
+    "lightgbm": "4.7.0",
+    "xgboost": "3.4.1"
+  },
+  "detalle": {
+    "modelo": "XGBoost + nuevas",
+    "tipo": "Pipeline"
+  }
+}

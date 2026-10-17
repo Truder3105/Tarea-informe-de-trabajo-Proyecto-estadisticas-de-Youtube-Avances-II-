@@ -17,15 +17,27 @@ from docx.oxml import OxmlElement
 # ============================== CONFIG (EDITAR) ==============================
 CONFIG = dict(
     autores="Julian Esteban Ballesteros Ortiz, Juan Diego Walteros Cortes",
-    facultad="Inteligencia Artificial, Uninversidad de Cundinamarca",
-    curso="CAD2202023206: Procesamiento de Lenguaje Natural - EIAIIPA2026_2",
-    profesor="PAUL ALEXANDER DIAZ MONTAÑA",
-    fecha_1="domingo, 11 de octubre de 2026",
+    facultad="Inteligencia Artificial, Universidad de Cundinamarca",
+    curso="CAD2202023206 – Procesamiento de Lenguaje Natural - EIAIIPA2026_2",
+    profesor="Docente, Paul Alexander Diaz Montaña",
+    fecha_1="[Fecha de entrega Semana 7]",
     fecha_2="domingo, 11 de octubre de 2026",
+    fecha_3="domingo, 18 de octubre de 2026",
 )
 # =============================================================================
 
 REFS = [
+    "Bergstra, J., & Bengio, Y. (2012). Random search for hyper-parameter optimization. *Journal of Machine Learning Research, 13*, 281–305.",
+    "Brier, G. W. (1950). Verification of forecasts expressed in terms of probability. *Monthly Weather Review, 78*(1), 1–3. https://doi.org/10.1175/1520-0493(1950)078<0001:VOFEIT>2.0.CO;2",
+    "Chen, T., & Guestrin, C. (2016). XGBoost: A scalable tree boosting system. En *Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining* (pp. 785–794). ACM. https://doi.org/10.1145/2939672.2939785",
+    "Deerwester, S., Dumais, S. T., Furnas, G. W., Landauer, T. K., & Harshman, R. (1990). Indexing by latent semantic analysis. *Journal of the American Society for Information Science, 41*(6), 391–407.",
+    "Guyon, I., & Elisseeff, A. (2003). An introduction to variable and feature selection. *Journal of Machine Learning Research, 3*, 1157–1182.",
+    "Hastie, T., Tibshirani, R., & Friedman, J. (2009). *The elements of statistical learning: Data mining, inference, and prediction* (2.ª ed.). Springer. https://doi.org/10.1007/978-0-387-84858-7",
+    "Ke, G., Meng, Q., Finley, T., Wang, T., Chen, W., Ma, W., Ye, Q., & Liu, T.-Y. (2017). LightGBM: A highly efficient gradient boosting decision tree. *Advances in Neural Information Processing Systems, 30*, 3146–3154.",
+    "Koenker, R., & Bassett, G. (1978). Regression quantiles. *Econometrica, 46*(1), 33–50. https://doi.org/10.2307/1913643",
+    "Niculescu-Mizil, A., & Caruana, R. (2005). Predicting good probabilities with supervised learning. En *Proceedings of the 22nd International Conference on Machine Learning* (pp. 625–632). ACM. https://doi.org/10.1145/1102351.1102430",
+    "Tibshirani, R. (1996). Regression shrinkage and selection via the lasso. *Journal of the Royal Statistical Society: Series B, 58*(1), 267–288. https://doi.org/10.1111/j.2517-6161.1996.tb02080.x",
+    "Wolpert, D. H. (1992). Stacked generalization. *Neural Networks, 5*(2), 241–259. https://doi.org/10.1016/S0893-6080(05)80023-1",
     "Alemán Viteri, S. B. (2021). Análisis de sentimientos para Twitter con Vader y TextBlob. *Revista Odigos, 2*(3), 9–25. https://doi.org/10.35290/ro.v2n3.2021.494",
     "Barrios Arce, J. (2019, 26 de julio). La matriz de confusión y sus métricas. *Health Big Data*. https://www.juanbarrios.com/la-matriz-de-confusion-y-sus-metricas/",
     "Benjamini, Y., & Hochberg, Y. (1995). Controlling the false discovery rate: A practical and powerful approach to multiple testing. *Journal of the Royal Statistical Society: Series B, 57*(1), 289–300. https://doi.org/10.1111/j.2517-6161.1995.tb02031.x",
@@ -139,20 +151,22 @@ class Informe:
         para = self.doc.add_paragraph(); _runs(para, "*Nota.* " + t, size=11); _pf(para, line=1.0, first=0, after=10)
 
     def figura(self, titulo, ruta, ancho=5.8, nota=None):
-        self._caption("Figura", titulo)
+        k = self._caption("Figura", titulo)
         para = self.doc.add_paragraph(); para.add_run().add_picture(str(ruta), width=Inches(ancho))
         _pf(para, line=1.0, first=0, align=WD_ALIGN_PARAGRAPH.CENTER, after=4)
         if nota: self.nota(nota)
         else: self.doc.paragraphs[-1].paragraph_format.space_after = Pt(10)
+        return k
 
     def tabla(self, titulo, cab, filas, anchos=None, nota=None, size=10, alin=None):
-        self._caption("Tabla", titulo)
+        kt = self._caption("Tabla", titulo)
         t = self.doc.add_table(rows=1 + len(filas), cols=len(cab)); t.alignment = WD_TABLE_ALIGNMENT.CENTER
         t.autofit = False
         tblPr = t._tbl.tblPr
         for tag in ("w:tblBorders",):
             for e in tblPr.findall(qn(tag)): tblPr.remove(e)
         anchos = anchos or [6.5 / len(cab)] * len(cab)
+        for j, w_ in enumerate(anchos): t.columns[j].width = Inches(w_)
         for i, row in enumerate([cab] + filas):
             for j, val in enumerate(row):
                 cell = t.cell(i, j); cell.width = Inches(anchos[j])
@@ -170,6 +184,7 @@ class Informe:
         if nota: self.nota(nota)
         else:
             sp = self.doc.add_paragraph(); _pf(sp, line=1.0, first=0, after=6)
+        return kt
 
     def portada(self, titulo, fecha):
         sp = self.doc.add_paragraph(); sp.paragraph_format.space_before = Pt(120)
@@ -584,14 +599,287 @@ def build_II(R, sal, plantilla, out):
     return rep.nw
 
 
+
+
+# =============================================================================== AVANCES III
+COMPL = {0: "Nula", 1: "Baja (lineal)", 2: "Baja (lineal + texto)", 3: "Media (árboles)", 4: "Media-alta", 5: "Alta (ensamble)"}
+DESC = {
+    "R1": "una regresión Ridge (penalización L2; Hoerl & Kennard, 1970) sobre variables estandarizadas y la categoría codificada en indicadores",
+    "R2": "un modelo de refuerzo del gradiente por histogramas (Friedman, 2001) con hiperparámetros elegidos por búsqueda en malla",
+    "R3": "una regresión Ridge sobre las variables numéricas, la categoría y la representación TF-IDF del texto",
+    "R4": "un modelo de refuerzo del gradiente por histogramas con hiperparámetros fijos y regularización L2",
+    "R5": "un modelo de refuerzo del gradiente que excluye por diseño las variables basadas en los likes de los comentarios",
+    "R6": "una regresión Ridge que excluye por diseño las variables basadas en los likes de los comentarios",
+    "R7": "un refuerzo del gradiente precedido de una selección de variables con Lasso (Tibshirani, 1996)",
+    "R8": "un refuerzo del gradiente precedido de una selección de las 15 columnas con mayor información mutua",
+    "R9": "un refuerzo del gradiente con el conjunto ampliado de variables derivadas de los comentarios",
+    "R10": "una regresión Ridge con el conjunto ampliado de variables derivadas de los comentarios",
+    "R11": "un refuerzo del gradiente que añade 50 componentes de análisis semántico latente del texto (Deerwester et al., 1990)",
+    "R12": "un refuerzo del gradiente cuyos hiperparámetros se eligieron por búsqueda aleatoria (Bergstra & Bengio, 2012)",
+    "R13": "un modelo LightGBM (Ke et al., 2017)", "R14": "un modelo XGBoost (Chen & Guestrin, 2016)",
+    "R15": "el promedio simple de un refuerzo del gradiente, una regresión Ridge y el modelo híbrido con TF-IDF",
+    "R16": "un apilamiento (Wolpert, 1992) de un refuerzo del gradiente, una regresión Ridge y el modelo híbrido, combinados con una regresión no negativa",
+}
+
+
+def build_III(R2, R3, sal, plantilla, out):
+    sal = Path(sal); M2 = R2["modelado"]; L = R2["limpieza"]; nv, nc = L["videos_finales"], L["comentarios_finales"]
+    reg, clf, sel, sc = R3["reg"]["modelos"], R3["clf"]["modelos"], R3["seleccion"], R3["clf"]["seleccion"]
+    pid = {v["id"]: k for k, v in reg.items()}; pares = {(d["id_a"], d["id_b"]): d for d in R3["pares"]}
+    eleg, ec = sel["elegido"], sc["elegido"]; E, EC = reg[eleg], clf[ec]; ref = reg[pid["R0"]]
+    base = R3["pruebas"]["base_e2"]; B = reg[base]; PR = R3["pruebas"]; H = R3["entorno"]; rps = R3["config"]["repeticiones"]
+    n3 = len(reg) + len(clf); n2 = M2["reg"]["n_modelos"] + len(M2["clf"]["modelos"]); ncfg = R3["reg"]["n_configs"] + R3["clf"]["n_configs"]
+    mej = 100 * (1 - E["rmse"] / ref["rmse"])
+    vd = lambda d: ("mejora significativa" if d["delta"] < 0 else "empeoramiento significativo") if d["p"] < .05 else "sin diferencia significativa"
+    fp = lambda d: f"ΔRMSE = {n(d['delta'], 3)}; *t* = {n(d['t'])}, *p* {pv(d['p'])}"
+    G = lambda a, b: pares.get((a, b))
+    frase = lambda a, b: (f"{fp(G(a, b))}, es decir, {vd(G(a, b))}" if G(a, b) else "no evaluada en esta ejecución")
+    REDUC = {"R5", "R6", "R7", "R8"}
+
+    def decision(d):
+        sig = d["p"] < .05
+        if d["id_b"] in REDUC:
+            return "Se conservan las variables" if (sig and d["delta"] > 0) else ("Se adopta la reducción" if sig else "Equivalente: se admite simplificar")
+        return "Se adopta" if (sig and d["delta"] < 0) else ("Se descarta (empeora)" if sig else "Se descarta (sin mejora)")
+    likes_importan = any(G(a, b) and G(a, b)["p"] < .05 and G(a, b)["delta"] > 0 for a, b in (("R4", "R5"), ("R1", "R6")))
+    ens = PR["ensamble_vs_individual"]; ens_gana = ens["p"] < .05 and ens["delta"] < 0
+    mejor_ind, mejor_ens = PR["mejor_individual"], PR["mejor_ensamble"]
+    CV, IV = R3["clf"], R3["intervalos"]; cb = clf[CV["base"]]; c6 = clf[next(k for k, v in clf.items() if v["id"] == "C6")]
+
+    rep = Informe(plantilla, "Estadísticas de YouTube: Avances III")
+    rep.portada('Tarea Informe de trabajo “Proyecto estadísticas de Youtube Avances III”', CONFIG["fecha_3"])
+    resumen = (f"Este informe documenta la tercera etapa del proyecto, centrada en la iteración controlada del modelo que estima el desempeño de un video de YouTube a partir de sus "
+               f"comentarios. Partiendo de la mejor solución de la etapa II, se ejecutaron seis iteraciones (diagnóstico del efecto de los likes de los comentarios, selección de variables, "
+               f"nuevas variables y análisis semántico latente, afinamiento y modelos alternativos, ensambles y calibración), cada una contrastada con la prueba t remuestreada corregida y con "
+               f"la regla de una desviación estándar. En total se evaluaron {n3} modelos adicionales y {ent(ncfg)} configuraciones. El modelo seleccionado para log(Views) fue «{eleg}», con RMSE de "
+               f"{n(E['rmse'])} y R² de {r_(E['r2'])}, {n(mej, 1)} % por debajo de la referencia; para la clase de alta popularidad se eligió «{ec}», con AUC de {r_(EC['auc'])} y puntaje de Brier de "
+               f"{r_(EC['brier'], 3)}. Se discuten las variables elegidas mediante importancia por permutación agrupada y se concluye que, para el producto completo, un solo modelo no es suficiente: "
+               f"se requieren un regresor, un clasificador calibrado y un modelo de intervalos, con cobertura empírica de {pct(IV['cobertura'])} frente al 80 % nominal.")
+    rep.resumen(resumen, "iteración de modelos, selección de variables, ensambles, calibración, regresión cuantílica, MLOps")
+    rep.salto()
+    t = rep.doc.add_paragraph(); _runs(t, "Tarea Informe de trabajo “Proyecto estadísticas de Youtube Avances III”", bold=True); _pf(t, first=0, align=WD_ALIGN_PARAGRAPH.CENTER)
+
+    # ------------------------------------------------------------------ Introducción
+    rep.h1("Introducción")
+    rep.p(f"La etapa II dejó como mejor regresor a «{M2['reg']['mejor']}», con una capacidad explicativa que el propio informe calificó como {nivel_r2(M2['reg']['modelos'][M2['reg']['mejor']]['r2'])} "
+          f"(R² = {r_(M2['reg']['modelos'][M2['reg']['mejor']]['r2'])}), y a «{M2['clf']['mejor']}» como mejor clasificador de alta popularidad (AUC = {r_(M2['clf']['modelos'][M2['clf']['mejor']]['auc'])}). "
+          f"Esos resultados abren preguntas que la tercera etapa debe resolver: si la señal proviene de la reacción del público o del tamaño de la audiencia, qué variables son realmente necesarias, si "
+          f"existen mejoras reales frente a la solución inicial y si un solo modelo basta para el producto final.")
+    rep.p("Esta etapa trata el desarrollo del modelo como un proceso iterativo y medible, no como una búsqueda del mayor número en una tabla. Cada iteración parte de una hipótesis, modifica una sola cosa "
+          "respecto de un modelo de comparación, se evalúa con las mismas particiones de validación y se acepta o descarta con un criterio estadístico explícito. Así, cada mejora queda justificada y "
+          "cada descarte también. El informe responde de forma directa a las preguntas de la asignación: ¿cuál fue el modelo seleccionado?, ¿cuál fue su desempeño y bajo qué métricas?, "
+          "¿cuántos modelos se probaron?, ¿qué herramientas se usaron para determinarlo?, ¿es suficiente un solo modelo? y ¿qué variables se seleccionaron para predecir?")
+    rep.p(f"El documento presenta primero el marco de la iteración y las herramientas probadas, luego las seis iteraciones con su evidencia, los resultados comparativos de regresión y clasificación, "
+          f"la selección y descripción del modelo, las variables elegidas, la discusión sobre la suficiencia de un solo modelo, las amenazas a la validez y el plan de la semana 10. Se trabaja con "
+          f"{ent(nv)} videos y {ent(nc)} comentarios depurados del conjunto de Patil (s. f.), los mismos de la etapa II.")
+
+    # ------------------------------------------------------------------ Marco
+    rep.h1("Marco metodológico de la iteración")
+    rep.h2("Principios de diseño")
+    rep.h3("Una sola variación por iteración", "Para atribuir un cambio de desempeño a una causa concreta, cada iteración se compara contra un modelo idéntico salvo por esa modificación (ablación controlada).")
+    rep.h3("Mismas particiones", f"Todos los modelos de esta etapa se evalúan con validación cruzada de 5 particiones repetida {rps} {'vez' if rps == 1 else 'veces'} y semilla fija, de modo que las diferencias se calculan por pares de particiones y no sobre promedios aislados.")
+    rep.h3("Criterio estadístico de decisión", "Una diferencia se considera real solo si la prueba *t* remuestreada corregida de Nadeau y Bengio (2003) arroja *p* < ,05. Cuando no hay diferencia significativa, se prefiere la opción más simple.")
+    rep.h3("Regla de una desviación estándar", "El modelo final se elige entre los que quedan dentro de un error estándar del mejor RMSE, escogiendo el de menor complejidad (Hastie et al., 2009). Este criterio reduce el riesgo de elegir un modelo complejo por una ventaja que puede ser ruido.")
+    rep.h3("Sin fuga de información", "Imputación, escalado, codificación, TF-IDF, selección de variables y reducción dimensional están dentro de *pipelines* de scikit-learn (Pedregosa et al., 2011) y se ajustan solo con los datos de entrenamiento de cada partición.")
+    rep.h2("Herramientas probadas")
+    lg = H.get("lightgbm"); xg = H.get("xgboost")
+    rows = [
+        ["*Pipeline* y *ColumnTransformer* (scikit-learn)", "Evitar fuga y asegurar reproducibilidad", "Todas", "Adoptada como base"],
+        ["GridSearchCV", "Afinamiento por malla (etapa II)", "I0", "Sustituida por búsqueda aleatoria por costo"],
+        ["RandomizedSearchCV (Bergstra & Bengio, 2012)", "Afinamiento de hiperparámetros", "I4", vd(G("R9", "R12")).capitalize() if G("R9", "R12") else "—"],
+        ["LassoCV + SelectFromModel (Tibshirani, 1996)", "Selección de variables", "I2", (f"Conserva {R3['seleccion_vars']['lasso']['n_sel']} de {R3['seleccion_vars']['lasso']['n_entrada']} columnas; {vd(G('R4', 'R7'))}" if G("R4", "R7") else "—")],
+        ["SelectKBest con información mutua (Guyon & Elisseeff, 2003)", "Selección de variables", "I2", (f"Conserva {R3['seleccion_vars']['mi']['n_sel']} columnas; {vd(G('R4', 'R8'))}" if G("R4", "R8") else "—")],
+        ["TruncatedSVD / LSA (Deerwester et al., 1990)", "Representación semántica del texto", "I3", vd(G("R9", "R11")).capitalize() if G("R9", "R11") else "—"],
+        ["Importancia por permutación (Breiman, 2001), individual y agrupada", "Interpretar y seleccionar variables", "I1–I6", "Adoptada"],
+        ["Promedio y apilamiento (Wolpert, 1992), implementación propia", "Combinar modelos", "I5", f"Mejor ensamble frente al mejor individual: {vd(ens)}"],
+        ["LightGBM (Ke et al., 2017)", "Boosting alternativo", "I4", (vd(G("R9", "R13")).capitalize() if G("R9", "R13") else f"No disponible en el entorno ({'no instalado' if not lg else lg})")],
+        ["XGBoost (Chen & Guestrin, 2016)", "Boosting alternativo", "I4", (vd(G("R9", "R14")).capitalize() if G("R9", "R14") else f"No disponible en el entorno ({'no instalado' if not xg else xg})")],
+        ["Regresión cuantílica (Koenker & Bassett, 1978)", "Intervalos de predicción", "I6", f"Cobertura {pct(IV['cobertura'])} (nominal 80 %)"],
+        ["CalibratedClassifierCV; Brier (1950) y ECE", "Calibrar probabilidades", "I6", f"Brier {r_(cb['brier'], 3)} → {r_(c6['brier'], 3)} con calibración isotónica (Niculescu-Mizil & Caruana, 2005)"],
+        ["Prueba *t* corregida y regla de 1 error estándar", "Decidir entre modelos", "Todas", "Adoptada"],
+    ]
+    rep.p(f"La Tabla {rep.nt + 1} lista las herramientas evaluadas, el propósito de cada una, la iteración donde se usó y el resultado, de modo que la elección final no dependa de una sola técnica. "
+          f"Las librerías opcionales (LightGBM y XGBoost) se incorporan solo si están instaladas, y el informe registra cuáles se ejecutaron.")
+    rep.tabla("Herramientas probadas y resultado de su evaluación", ["Herramienta", "Propósito", "Iteración", "Resultado"], rows, [2.3, 1.7, 0.8, 1.7], size=9, alin=["l", "l", "c", "l"],
+              nota=f"Entorno: Python {H['python']}, scikit-learn {H['scikit-learn']}. El resultado resume la comparación pareada de cada herramienta frente a su modelo de comparación.")
+
+    # ------------------------------------------------------------------ Iteraciones
+    rep.h1("Iteraciones del modelo")
+    filas = [[d["it"], d["desc"], n(d["delta"], 3), ("< ,001" if d["p"] < .001 else r_(d["p"], 3)), decision(d)] for d in R3["pares"]]
+    ti = rep.nt + 1; fi = rep.nf + 1
+    rep.p(f"La Tabla {ti} resume la evidencia de cada iteración y la Figura {fi} muestra el RMSE de todos los modelos probados; la línea punteada es el umbral de una desviación estándar sobre el mejor valor. "
+          f"Una diferencia negativa indica que el modelo nuevo reduce el error respecto de su comparación.")
+    rep.tabla("Resumen de iteraciones: cambio evaluado, diferencia de RMSE y decisión", ["It.", "Cambio evaluado", "ΔRMSE", "*p*", "Decisión"], filas, [0.4, 2.6, 0.8, 0.7, 2.0], size=9, alin=["c", "l", "c", "c", "l"],
+              nota="ΔRMSE = RMSE del modelo nuevo menos RMSE del modelo de comparación (unidades de log(1 + Views)). *p*: prueba *t* remuestreada corregida.")
+    rep.figura("RMSE de todos los modelos evaluados por iteración", sal / "fig3_iteraciones.png", 6.2,
+               "Colores: iteración (I0 = línea base; I1 = diagnóstico de likes; I2 = selección; I3 = variables nuevas; I4 = afinamiento; I5 = ensambles). Barras de error: desviación estándar entre particiones.")
+
+    rep.h2("Iteración 0: línea base de la etapa II")
+    rep.p(f"Se reevaluaron los modelos clave de la etapa II con el protocolo actual. Ridge – B (Hoerl & Kennard, 1970) obtuvo RMSE = {n(reg[pid['R1']]['rmse'])}, el refuerzo del gradiente con malla (Friedman, 2001), {n(reg[pid['R2']]['rmse'])}, y el híbrido con TF-IDF, "
+          f"{n(reg[pid['R3']]['rmse'])}, frente a {n(ref['rmse'])} de la referencia. El mejor de ellos, «{base}» (RMSE = {n(B['rmse'])}; R² = {r_(B['r2'])}), es la base contra la que se mide toda mejora. "
+          f"En la etapa II se habían evaluado {n2} modelos, de modo que, con los {n3} de esta etapa, el proyecto acumula {n2 + n3} modelos probados.")
+    rep.h2("Iteración 1: ¿cuánto de la señal proviene del tamaño de la audiencia?")
+    rep.p(f"Hipótesis: los likes de los comentarios más destacados crecen con la audiencia, por lo que las variables derivadas de ellos (likes medios, likes máximos y sentimiento ponderado) podrían estar actuando como un "
+          f"indicador indirecto de las vistas y no como una reacción independiente del público. Cambio: se eliminaron esas tres variables y se compararon los mismos modelos. Resultado: con refuerzo del gradiente, "
+          f"{frase('R4', 'R5')}; con Ridge, {frase('R1', 'R6')}. En clasificación, la regresión logística sin esas variables obtuvo AUC = {r_(clf[next(k for k, v in clf.items() if v['id'] == 'C3')]['auc'])} frente a "
+          f"{r_(clf[next(k for k, v in clf.items() if v['id'] == 'C1')]['auc'])} con ellas. "
+          + ("Conclusión: las variables basadas en likes sí aportan información, pero el modelo conserva una parte sustancial de su capacidad sin ellas, de modo que la señal no se reduce a ese proxy; se mantienen en el modelo y se declara la dependencia como limitación."
+             if likes_importan else
+             "Conclusión: quitar esas variables no empeora de forma significativa el desempeño, es decir, el modelo no depende de ese posible proxy de audiencia, lo que refuerza la validez del resultado y permite un modelo más sencillo."))
+    rep.h2("Iteración 2: selección de variables")
+    sv = R3["seleccion_vars"]
+    rep.p(f"Hipótesis: parte de las {len(reg[pid['R4']]['cols'])} variables de entrada es redundante. Cambio: se probaron dos selectores incorporados en el *pipeline*: Lasso, que conserva {sv['lasso']['n_sel']} de "
+          f"{sv['lasso']['n_entrada']} columnas tras la codificación, y la información mutua con las 15 columnas de mayor puntaje. Resultado: Lasso, {frase('R4', 'R7')}; información mutua, {frase('R4', 'R8')}. "
+          f"Entre las columnas que conserva Lasso están {', '.join('*' + ETIQ_X(x) + '*' for x in sv['lasso']['sel'][:6])}. "
+          "Cuando la reducción no empeora el error, se obtiene un modelo más simple, barato de monitorear y menos propenso a sobreajuste (Guyon & Elisseeff, 2003).")
+    rep.h2("Iteración 3: ingeniería de variables y análisis semántico latente")
+    rep.p(f"Hipótesis: la distribución del sentimiento dentro de los comentarios contiene más información que su promedio. Cambio: se añadieron seis variables (VADER máximo y mínimo, proporciones de comentarios muy positivos y "
+          f"muy negativos, diversidad léxica y proporción de emojis) y, por separado, 50 componentes de análisis semántico latente del texto. Resultado: con refuerzo del gradiente, {frase('R4', 'R9')}; con Ridge, "
+          f"{frase('R1', 'R10')}; la adición del texto latente, {frase('R9', 'R11')}. Frente al refuerzo del gradiente de la etapa II, el modelo ampliado muestra {frase('R2', 'R9')}.")
+    rep.h2("Iteración 4: afinamiento de hiperparámetros y boosting alternativos")
+    rep.p(f"Hipótesis: los hiperparámetros fijos limitan el modelo. Cambio: búsqueda aleatoria de {R3['config']['iter_busqueda']} configuraciones sobre tasa de aprendizaje, profundidad, hojas máximas, "
+          f"mínimo de muestras por hoja y regularización L2, con validación interna de {R3['config']['cv_interna']} particiones y parada temprana. Resultado: {frase('R9', 'R12')}. "
+          f"LightGBM: {frase('R9', 'R13') if G('R9', 'R13') else 'no se ejecutó porque la librería no estaba instalada en este entorno'}; XGBoost: {frase('R9', 'R14') if G('R9', 'R14') else 'no se ejecutó porque la librería no estaba instalada en este entorno'}.")
+    rep.h2("Iteración 5: ensambles")
+    rep.p(f"Hipótesis: modelos de familias distintas cometen errores distintos y combinarlos reduce el error. Cambio: promedio simple y apilamiento de un refuerzo del gradiente, una regresión Ridge y el híbrido con TF-IDF; "
+          f"en el apilamiento, un metamodelo de regresión no negativa aprende los pesos con predicciones fuera de muestra. Resultado: promedio, {frase('R9', 'R15')}; apilamiento, {frase('R9', 'R16')}. "
+          f"El mejor ensamble («{mejor_ens}») frente al mejor modelo individual («{mejor_ind}») muestra {fp(ens)}, es decir, {vd(ens)}.")
+    rep.h2("Iteración 6: incertidumbre y calibración")
+    rep.p(f"Hipótesis: un producto útil no solo entrega un valor sino cuánta confianza merece. Cambio: se entrenaron modelos de regresión cuantílica (percentiles 10 y 90; Koenker & Bassett, 1978) para construir intervalos "
+          f"de predicción del 80 % y se calibraron las probabilidades del clasificador con regresión isotónica. Resultado: la cobertura empírica de los intervalos fue {pct(IV['cobertura'])} (desviación estándar entre "
+          f"particiones {pct(IV['cobertura_sd'])}) con un ancho medio de {n(IV['ancho'])} unidades logarítmicas, es decir, un factor multiplicativo de {n(2.718281828 ** IV['ancho'])}; "
+          f"{'la cobertura está cerca del valor nominal' if abs(IV['cobertura'] - .8) < .05 else 'la cobertura se aleja del valor nominal, por lo que los intervalos deben recalibrarse antes de usarse en producción'}. "
+          f"En clasificación, el puntaje de Brier (Brier, 1950) pasó de {r_(cb['brier'], 3)} a {r_(c6['brier'], 3)} y el error de calibración esperado, de {r_(cb['ece'], 3)} a {r_(c6['ece'], 3)} con la calibración isotónica.")
+
+    # ------------------------------------------------------------------ Resultados
+    rep.h1("Resultados comparativos")
+    rep.h2("Regresión sobre log(Views)")
+    ids = sorted(reg, key=lambda k: int(reg[k]["id"][1:]))
+    rows = [[reg[k]["id"], k, reg[k]["it"], f"{n(reg[k]['rmse'])} ({n(reg[k]['rmse_sd'])})", n(reg[k]["mae"]), r_(reg[k]["r2"]), r_(reg[k]["rho"]), str(reg[k]["configs"])] for k in ids]
+    tm = rep.nt + 1
+    rep.p(f"La Tabla {tm} reúne las métricas de los {len(reg)} modelos de regresión de esta etapa: RMSE, error absoluto medio (MAE), R², correlación de Spearman entre valores reales y predichos y número de "
+          f"configuraciones exploradas. El menor RMSE lo obtuvo «{sel['mejor']}» ({n(reg[sel['mejor']]['rmse'])}); sin embargo, {len(sel['candidatos'])} modelos quedan dentro de un error estándar ({n(sel['se'], 3)}) de ese valor, "
+          f"por lo que son estadísticamente indistinguibles en la práctica.")
+    rep.tabla("Desempeño de los modelos de regresión (validación cruzada repetida)", ["ID", "Modelo", "It.", "RMSE (DE)", "MAE", "R²", "ρ", "Config."], rows, [0.4, 2.7, 0.4, 0.95, 0.5, 0.5, 0.5, 0.55], size=8,
+              alin=["c", "l", "c", "c", "c", "c", "c", "c"], nota="RMSE y MAE en unidades de log(1 + Views). DE: desviación estándar entre particiones. Config.: configuraciones exploradas.")
+    rep.figura("Distribución del RMSE por partición de los modelos con mejor desempeño y la referencia", sal / "fig3_boxplot.png", 5.8, "Elaboración propia.")
+    rep.p(f"El modelo seleccionado reduce el RMSE de la referencia en {n(mej, 1)} % ({fp(PR['elegido_vs_ref'])}) y, frente a la base de la etapa II, muestra {fp(PR['elegido_vs_base'])}, es decir, {vd(PR['elegido_vs_base'])}.")
+    rep.h2("Clasificación de alta popularidad y calibración")
+    crow = [[v["id"], k, r_(v["acc"]), r_(v["f1"]), f"{r_(v['auc'])} ({r_(v['auc_sd'])})", r_(v["prec"]), r_(v["sens"]), r_(v["espec"]), r_(v["brier"], 3), r_(v["ece"], 3)]
+            for k, v in sorted(clf.items(), key=lambda kv: int(kv[1]["id"][1:]))]
+    tc = rep.nt + 1
+    rep.p(f"La Tabla {tc} presenta los {len(clf)} clasificadores. Además de la exactitud, el F1, el AUC, la precisión, la sensibilidad y la especificidad (Barrios Arce, 2019; Alemán Viteri, 2021), se reportan el puntaje de Brier y "
+          f"el error de calibración esperado (ECE), que miden si las probabilidades son confiables y no solo si la clase es correcta.")
+    rep.tabla("Desempeño de los clasificadores de alta popularidad", ["ID", "Modelo", "Exact.", "F1", "AUC (DE)", "Prec.", "Sens.", "Espec.", "Brier", "ECE"], crow, [0.35, 2.0, 0.5, 0.45, 0.8, 0.45, 0.45, 0.5, 0.5, 0.5], size=8,
+              alin=["c", "l", "c", "c", "c", "c", "c", "c", "c", "c"], nota="Clase positiva: alta popularidad (sobre la mediana de log Views). Exact.: exactitud; Prec.: precisión; Sens.: sensibilidad; Espec.: especificidad; ECE: error de calibración esperado.")
+    (tn, fp_), (fn, tp) = CV["cm"]
+    rep.p(f"El clasificador elegido por la regla de una desviación estándar fue «{ec}» (AUC = {r_(EC['auc'])}; exactitud = {r_(EC['acc'])}; sensibilidad = {r_(EC['sens'])}; especificidad = {r_(EC['espec'])}). "
+          f"Frente al modelo base de la etapa II, la diferencia de AUC es {n(CV['prueba_vs_base']['delta_auc'], 3)} (*p* {pv(CV['prueba_vs_base']['p'])}). "
+          f"Su matriz de confusión fuera de muestra registra {ent(tp)} verdaderos positivos, {ent(tn)} verdaderos negativos, {ent(fp_)} falsos positivos y {ent(fn)} falsos negativos. "
+          f"La Figura {rep.nf + 1} compara la calibración del modelo base y la del elegido.")
+    rep.figura("Curva de calibración del clasificador base y del seleccionado", sal / "fig3_calibracion.png", 3.8, "La diagonal representa una calibración perfecta. Elaboración propia.")
+
+    # ------------------------------------------------------------------ Selección y descripción
+    rep.h1("Selección y descripción del modelo")
+    cand = sorted(sel["candidatos"], key=lambda k: (reg[k]["compl"], reg[k]["rmse"]))
+    rows = [[reg[k]["id"], k, f"{n(reg[k]['rmse'])}", COMPL[reg[k]["compl"]], "Sí" if k == eleg else ""] for k in cand]
+    rep.p(f"El modelo se eligió con un procedimiento definido de antemano: (a) se identificó el mejor RMSE medio ({n(reg[sel['mejor']]['rmse'])}, «{sel['mejor']}»); (b) se calculó el umbral de un error estándar "
+          f"({n(sel['umbral'])}); (c) se listaron los modelos por debajo del umbral (Tabla {rep.nt + 1}); y (d) se escogió el de menor complejidad. Este procedimiento evita premiar diferencias que son ruido de validación.")
+    rep.tabla("Candidatos dentro de un error estándar del mejor RMSE", ["ID", "Modelo", "RMSE", "Complejidad", "Elegido"], rows, [0.5, 3.4, 0.7, 1.4, 0.6], size=9, alin=["c", "l", "c", "l", "c"],
+              nota=f"Umbral: {n(sel['umbral'])} = mejor RMSE + 1 error estándar.")
+    fin = R3["final"]
+    descr = DESC.get(E["id"], "un modelo de regresión")
+    extra = ""
+    if "hiperparametros" in fin: extra += " Hiperparámetros elegidos: " + ", ".join(f"{k.replace('m__', '')} = {n(v, 3) if isinstance(v, float) else v}" for k, v in fin["hiperparametros"].items()) + "."
+    if "pesos_apilado" in fin: extra += " Pesos del apilamiento (HGB, Ridge, híbrido): " + ", ".join(n(w, 3) for w in fin["pesos_apilado"]) + "."
+    rep.p(f"El modelo seleccionado para estimar log(Views) es «{eleg}» ({E['id']}), {descr}. Utiliza {E['n_vars']} variables de entrada, entra a un *pipeline* con imputación por la mediana, estandarización "
+          f"y codificación de la categoría, y se evaluó con RMSE = {n(E['rmse'])}, MAE = {n(E['mae'])}, R² = {r_(E['r2'])} y ρ = {r_(E['rho'])}.{extra}")
+    rep.p(f"La elección se justifica por cuatro razones: desempeño estadísticamente equivalente al mejor modelo, menor complejidad entre los equivalentes, ausencia de fuga de información y disponibilidad en producción de todas sus "
+          f"variables (se calculan a partir de los comentarios y metadatos públicos). Para clasificar la alta popularidad se selecciona «{ec}». El modelo final se reentrenó con todos los datos y se guardó junto con un "
+          f"archivo de metadatos (variables de entrada, fecha, métricas y versiones de las librerías) para su auditoría y despliegue.")
+
+    # ------------------------------------------------------------------ Variables
+    rep.h1("Variables seleccionadas para predecir")
+    g = R3["importancia_grupos"]
+    rows = [[r["etiqueta"], ", ".join(ETIQ_X(v_) for v_ in r["vars"][:5]) + ("…" if len(r["vars"]) > 5 else ""), f"{n(r['delta'], 3)} ({n(r['sd'], 3)})"] for r in g]
+    rep.p(f"El modelo elegido usa las variables de entrada que muestra la Tabla {rep.nt + 1}, organizadas en grupos. Para valorar cada grupo se permutaron conjuntamente sus columnas en un conjunto de prueba y se midió el aumento del "
+          f"RMSE (importancia por permutación agrupada), lo que evita repartir de forma engañosa la importancia entre variables correlacionadas, como el sentimiento medio y las proporciones de clases.")
+    rep.tabla("Grupos de variables del modelo y su importancia por permutación", ["Grupo", "Variables (primeras cinco)", "Aumento de RMSE (DE)"], rows, [2.0, 3.2, 1.3], size=9, alin=["l", "l", "c"],
+              nota=f"RMSE de referencia en el conjunto de prueba: {n(R3['rmse_test_importancia'])}. 25 repeticiones de permutación por grupo; 20 en la medición individual.")
+    rep.figura("Importancia por permutación agrupada", sal / "fig3_grupos.png", 5.0, "Elaboración propia.")
+    iv = R3["importancia_vars"][:8]
+    rep.p(f"El grupo con mayor efecto es *{g[0]['etiqueta']}* (aumento de RMSE = {n(g[0]['delta'], 3)}), seguido de *{g[1]['etiqueta']}*" + (f" y *{g[2]['etiqueta']}*" if len(g) > 2 else "") +
+          f". En el nivel individual, las variables más relevantes son {', '.join('*' + ETIQ_X(r['grupo']) + '*' for r in iv[:4])}. "
+          f"Las variables cuyo efecto no supera la variabilidad de la permutación se pueden retirar en versiones simplificadas sin pérdida apreciable, lo que se corrobora con la Iteración 2.")
+
+    # ------------------------------------------------------------------ Suficiencia de un solo modelo
+    rep.h1("¿Es suficiente un solo modelo?")
+    pk = sorted(R3["por_keyword"], key=lambda r: -r["rmse"])
+    rep.p(f"La respuesta tiene matices y se apoya en cuatro evidencias. Primera, para la estimación puntual de log(Views), el mejor ensamble frente al mejor modelo individual arroja {fp(ens)}: "
+          f"{'el ensamble sí aporta una mejora real, aunque a costa de mayor complejidad, por lo que se justifica una arquitectura con más de un modelo' if ens_gana else 'no hay mejora significativa al combinar modelos, de modo que, para la estimación puntual, un solo modelo sencillo es suficiente y los ensambles no compensan su costo de mantenimiento'}.")
+    rep.p(f"Segunda, el producto requiere tareas distintas: estimar la magnitud (regresión, «{eleg}»), clasificar la popularidad (clasificación, «{ec}») y expresar incertidumbre (regresión cuantílica, con cobertura de "
+          f"{pct(IV['cobertura'])} frente al 80 % nominal). Un solo modelo no cubre estas salidas con métricas y calibración apropiadas para cada una.")
+    tk = rep.nt + 1
+    rep.p(f"Tercera, el error es heterogéneo entre categorías (Tabla {tk}): el RMSE va de {n(min(r['rmse'] for r in pk))} a {n(max(r['rmse'] for r in pk))}, lo que indica que un modelo global es menos confiable en ciertos nichos "
+          f"y que conviene monitorear el error por segmento y evaluar modelos específicos si la brecha persiste. La correlación entre el valor predicho y el error absoluto es ρ = {r_(R3['heterocedasticidad_rho'])}"
+          f"{', señal de heterocedasticidad que justifica los intervalos de predicción' if abs(R3['heterocedasticidad_rho']) > .15 else ''}.")
+    rep.tabla("Error del modelo seleccionado por categoría (cinco mayores)", ["Categoría", "Videos", "RMSE"], [[r["keyword"], str(r["n"]), n(r["rmse"])] for r in pk[:5]], [3.0, 1.2, 1.2], alin=["l", "c", "c"],
+              nota="Categorías con al menos 15 videos; predicciones fuera de muestra.")
+    rep.p("Cuarta, un criterio de operación: en producción los modelos se degradan por cambios en los datos. Mantener un regresor principal, un clasificador calibrado y un modelo de intervalos, versionados y monitoreados "
+          "por separado, permite detectar y corregir cada degradación sin reemplazar todo el sistema. En conclusión, un único modelo no es suficiente para el producto completo, aunque sí lo es, "
+          f"{'solo con ciertas salvedades,' if ens_gana else 'con holgura,'} para la estimación puntual de la popularidad.")
+
+    # ------------------------------------------------------------------ Amenazas y plan
+    rep.h1("Amenazas a la validez y limitaciones")
+    rep.p(f"Primero, la selección entre {len(reg)} modelos sobre las mismas particiones introduce un optimismo leve en el desempeño reportado; se mitigó con la regla de una desviación estándar y con pruebas "
+          f"pareadas corregidas, pero la estimación definitiva requiere un conjunto de prueba retenido que no se haya usado en ninguna decisión. Segundo, " +
+          ("las variables basadas en likes de comentarios aportan información y podrían reflejar en parte el tamaño de la audiencia (Iteración 1). " if likes_importan else "el modelo no depende de manera significativa de las variables basadas en likes de comentarios (Iteración 1). ") +
+          "Tercero, los datos son una única instantánea y los comentarios son los más destacados, no una muestra aleatoria. Cuarto, la etiqueta de sentimiento del conjunto tiene concordancia limitada con VADER, que además está calibrado para inglés. "
+          "Quinto, las relaciones son asociativas y no causales.")
+    rep.h1("Plan para la semana 10")
+    rep.p("La última etapa se enfocará en el producto: (a) evaluación final sobre un conjunto de prueba retenido; (b) empaquetado del modelo seleccionado en una API (FastAPI) dentro de un contenedor y despliegue en un servicio "
+          "en la nube; (c) registro de predicciones y monitoreo del cambio en la distribución de las variables (índice de estabilidad poblacional), del error y de la cobertura de los intervalos; (d) una prueba en un "
+          "entorno real con videos nuevos; y (e) el análisis de retos, cambios respecto del diseño inicial y lecciones aprendidas que pide la asignación.")
+    rep.h1("Conclusiones")
+    rep.p(f"La iteración controlada permitió justificar cada decisión con evidencia: se probaron {n3} modelos en esta etapa ({n2 + n3} en total) y {ent(ncfg)} configuraciones, con pruebas pareadas y una regla de parsimonia. "
+          f"El modelo seleccionado para log(Views), «{eleg}», alcanza RMSE = {n(E['rmse'])} y R² = {r_(E['r2'])}, y para la alta popularidad se eligió «{ec}» con AUC = {r_(EC['auc'])}. "
+          f"El diagnóstico de los likes de los comentarios, la selección de variables y la comparación de ensambles muestran qué componentes del modelo son realmente necesarios. Un solo modelo no es suficiente para "
+          f"el producto completo, que debe ofrecer estimación, clasificación calibrada e incertidumbre; la semana 10 consolidará estos componentes en un servicio desplegado y monitoreado.")
+    rep.referencias(["Alemán", "Barrios", "Bergstra", "Brier", "Breiman", "Chen, T.", "Deerwester", "Friedman", "Guyon", "Hastie", "Hoerl", "Ke, G.", "Koenker", "Nadeau", "Niculescu", "Patil", "Pedregosa", "Tibshirani", "Wolpert"])
+    rep.guardar(out)
+    return rep.nw
+
+
+def ETIQ_X(v):
+    """Etiqueta legible de una variable (acepta nombres de columnas codificadas, p. ej. Keyword_tech)."""
+    et = {"sent_mean": "Sentimiento medio", "sent_std": "Dispersión del sentimiento", "pos_share": "% positivos", "neg_share": "% negativos", "neu_share": "% neutros",
+          "sent_w": "Sentimiento ponderado por likes", "clike_mean": "Likes medios del comentario", "clike_max": "Likes máx. del comentario", "n_com": "N.º de comentarios",
+          "len_mean": "Longitud media", "words_mean": "Palabras medias", "vader_mean": "VADER medio", "vader_std": "VADER dispersión", "q_share": "% con «?»",
+          "excl_share": "% con «!»", "upper_share": "% mayúsculas", "age_days": "Antigüedad", "title_len": "Longitud del título", "title_vader": "VADER del título",
+          "title_q": "Título con «?»", "Keyword": "Categoría", "text": "Texto (TF-IDF/LSA)", "vader_max": "VADER máximo", "vader_min": "VADER mínimo",
+          "strong_pos": "% muy positivos", "strong_neg": "% muy negativos", "lex_div": "Diversidad léxica", "emoji_share": "% con emojis"}
+    if v in et: return et[v]
+    if v.startswith("Keyword_"): return "Categoría = " + v.split("_", 1)[1]
+    return v
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--plantilla", default="Plantilla_APA7.docx"); ap.add_argument("--salida", default="salida")
-    a = ap.parse_args(); R = cargar(a.salida)
-    o1, o2 = Path(a.salida) / "Avances_I_YouTube_APA7.docx", Path(a.salida) / "Avances_II_YouTube_APA7.docx"
-    w1 = build_I(R, a.salida, a.plantilla, o1); w2 = build_II(R, a.salida, a.plantilla, o2)
-    print(f"Resumen I: {w1} palabras; Resumen II: {w2} palabras (APA: 150–250)")
-    print("Generados:", o1, o2)
+    ap.add_argument("--informe", default="todos", choices=["1", "2", "3", "todos"])
+    a = ap.parse_args(); sal = Path(a.salida)
+    r12, r3 = sal / "results.json", sal / "results_iii.json"
+    R = cargar(sal) if r12.exists() else None; R3 = json.load(open(r3, encoding="utf-8")) if r3.exists() else None
+    hechos = []
+    if a.informe in ("1", "todos") and R:
+        o = sal / "Avances_I_YouTube_APA7.docx"; w = build_I(R, sal, a.plantilla, o); hechos.append((o, w))
+    if a.informe in ("2", "todos") and R:
+        o = sal / "Avances_II_YouTube_APA7.docx"; w = build_II(R, sal, a.plantilla, o); hechos.append((o, w))
+    if a.informe in ("3", "todos") and R and R3:
+        o = sal / "Avances_III_YouTube_APA7.docx"; w = build_III(R, R3, sal, a.plantilla, o); hechos.append((o, w))
+    elif a.informe == "3":
+        print("Falta results.json o results_iii.json: ejecute analisis.py e iteracion.py primero.")
+    for o, w in hechos: print(f"{o.name}: resumen de {w} palabras (APA: 150–250)")
 
 
 if __name__ == "__main__":
