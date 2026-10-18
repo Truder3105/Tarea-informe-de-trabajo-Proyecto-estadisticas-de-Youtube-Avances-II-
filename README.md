@@ -1,259 +1,178 @@
-# 📊 Proyecto Estadísticas de YouTube
+# Proyecto: Análisis y Predicción de Estadísticas de YouTube (Avances I, II y III)
 
-### Predicción del desempeño de un video a partir de sus comentarios (NLP + MLOps)
+Este repositorio ([Tarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-)) contiene el código, los datos y los artefactos del proyecto de analítica avanzada y aprendizaje automático sobre el conjunto de datos de YouTube (Patil, s. f.). El flujo de trabajo abarca desde la exploración y línea base (**Etapas I y II**) hasta el refinamiento iterativo, ingeniería de características, selección de variables, optimización de hiperparámetros, ensambles, calibración de probabilidades e intervalos de predicción (**[Etapa III / Commit e556a7b](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fcommit%2Fe556a7b560a3f51340a81e1e52518d0994141c56)**), junto con la generación automatizada de informes académicos en formato APA 7.
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-ML-F7931E?logo=scikitlearn&logoColor=white)
-![NLP](https://img.shields.io/badge/NLP-VADER%20%7C%20TF--IDF-2F5D8A)
-![Informes](https://img.shields.io/badge/Informes-APA%207-informational)
-![Estado](https://img.shields.io/badge/Estado-Avances%20I%20y%20II-success)
+## Estructura del Repositorio
 
-Repositorio de la tarea **«Proyecto Estadísticas de YouTube – Avances I y Avances II»** (informes de trabajo, semanas 7 y 8).
-Contiene un *pipeline* reproducible que analiza la calidad de los datos, ejecuta análisis estadísticos no triviales, compara modelos de
-aprendizaje automático y **genera automáticamente los informes en formato APA 7** a partir de los resultados.
+| Ruta / Archivo | Descripción | Etapa |
+| :--- | :--- | :--- |
+| [LEEME.md](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2FLEEME.md) | Guía rápida de ejecución del pipeline | General |
+| [README.md](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2FREADME.md) | Documentación técnica principal del proyecto | General |
+| [requirements.txt](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Frequirements.txt) | Dependencias base del entorno Python | General |
+| [Plantilla\_APA7.docx](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2FPlantilla_APA7.docx) | Plantilla institucional base en Word con estilos APA 7 | General |
+| [analisis.py](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fanalisis.py) | Pipeline de exploración, preprocesamiento, modelado base y gráficos | Etapas I y II |
+| [iteracion.py](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fiteracion.py) | Pipeline de experimentación iterativa (`I0`–`I6`), ablación, selección 1-SE y calibración | Etapa III |
+| [informes.py](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Finformes.py) | Generador automatizado de los informes de Avances I, II y III en `.docx` | Etapas I, II y III |
+| [data/videos-stats.csv](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fdata%2Fvideos-stats.csv) | Métricas de videos de YouTube (1,881 registros brutos; 1,867 válidos) | Datos fuente |
+| [data/comments.csv](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fdata%2Fcomments.csv) | Comentarios asociados a los videos (18,409 registros) | Datos fuente |
+| [salida/modelo\_final.joblib](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Fmodelo_final.joblib) | Pipeline serializado del modelo seleccionado en la Etapa II | Etapa II |
+| [salida/modelo\_metadata.json](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Fmodelo_metadata.json) | Metadatos e hiperparámetros del modelo de la Etapa II | Etapa II |
+| [salida/results.json](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Fresults.json) | Resultados numéricos completos de las Etapas I y II | Etapas I y II |
+| [salida/modelo\_final\_iii.joblib](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Fmodelo_final_iii.joblib) | Pipeline serializado del modelo ganador de la Etapa III (`XGBoost + nuevas`) | Etapa III |
+| [salida/modelo\_iii\_metadata.json](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Fmodelo_iii_metadata.json) | Metadatos, predictores (27 variables) y métricas CV del modelo de la Etapa III | Etapa III |
+| [salida/results\_iii.json](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Fresults_iii.json) | Resultados experimentales de las iteraciones `I0`–`I6` (17 regresores y 8 clasificadores) | Etapa III |
+| [salida/Avances\_I\_YouTube\_APA7.docx](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2FAvances_I_YouTube_APA7.docx) | Informe académico del Avance I en formato Word (APA 7) | Etapa I |
+| [salida/Avances\_II\_YouTube\_APA7.docx](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2FAvances_II_YouTube_APA7.docx) | Informe académico del Avance II en formato Word (APA 7) | Etapa II |
+| [salida/Avances\_III\_YouTube\_APA7.docx](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2FAvances_III_YouTube_APA7.docx) | Informe académico del Avance III en formato Word (APA 7) | Etapa III |
+| [salida/Tarea informe de trabajo Proyecto estadisticas de Youtube Avances II.pdf](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2FTarea%2520informe%2520de%2520trabajo%2520Proyecto%2520estadisticas%2520de%2520Youtube%2520Avances%2520II.pdf) | Versión final exportada en PDF del Avance II | Etapa II |
+| [salida/Tarea Informe de trabajo Proyecto estadisticas de Youtube Avances III.pdf](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2FTarea%2520Informe%2520de%2520trabajo%2520Proyecto%2520estadisticas%2520de%2520Youtube%2520Avances%2520III.pdf) | Versión final exportada en PDF del Avance III | Etapa III |
 
----
+### Figuras Generadas en `salida/`
 
-## 👥 Datos del taller
+* **Etapas I y II (`analisis.py`):** `fig_distribuciones.png`, `fig_spearman.png`, `fig_comentarios_por_video.png`, `fig_keyword_sentimiento.png`, `fig_modelos_rmse.png`, `fig_real_vs_predicho.png`, `fig_curva_aprendizaje.png`, `fig_matriz_confusion.png`, `fig_importancia.png`.
+* **Etapa III (`iteracion.py`):**
+  * [fig3\_iteraciones.png](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Ffig3_iteraciones.png): Evolución de desempeño (RMSE y AUC-ROC) a lo largo de las iteraciones `I0`–`I6` y umbral de selección 1-SE.
+  * [fig3\_grupos.png](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Ffig3_grupos.png): Importancia por permutación agrupada por familias temáticas de variables.
+  * [fig3\_real\_vs\_predicho.png](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Ffig3_real_vs_predicho.png): Diagnóstico de valores observados frente a predichos y análisis de residuos del modelo ganador.
+  * [fig3\_boxplot.png](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Ffig3_boxplot.png): Distribución de errores y métricas por pliegue y categoría temática (`Keyword`).
+  * [fig3\_intervalos.png](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Ffig3_intervalos.png): Cobertura empírica de los intervalos de predicción al 80% mediante regresión cuantílica.
+  * [fig3\_calibracion.png](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Ffig3_calibracion.png): Curvas de confiabilidad (calibración isotónica) para el clasificador de popularidad.
 
-| | |
-|---|---|
-| **Integrantes** | Julian Esteban Ballesteros Ortiz · Juan Diego Walteros Cortes |
-| **Universidad** | Universidad de Cundinamarca |
-| **Programa** | Inteligencia Artificial |
-| **Asignatura** | CAD2202023206 – Procesamiento de Lenguaje Natural – EIAIIPA2026_2 |
-| **Docente** | Paul Alexander Diaz Montaña |
-| **Fecha** | domingo, 11 de octubre de 2026 |
+## Preguntas de Investigación y Objetivos
 
----
+### Pregunta Principal (Regresión)
+> **¿En qué medida el volumen de interacción en comentarios, la polaridad afectiva (VADER), las características léxicas del título y el contenido temático (`Keyword`) permiten predecir el número de visualizaciones (`Views`) de un video de YouTube sin depender de métricas contemporáneas con fuga de información?**
 
-## 📑 Tabla de contenido
+* **Objetivo:** Construir y refinar iterativamente un modelo supervisado capaz de estimar las visualizaciones esperadas de un video e incorporar intervalos de predicción calibrados.
+* **Variable Objetivo:** $\log_{10}(\text{Views} + 1)$ en la exploración inicial y $\ln(\text{Views} + 1)$ (`log1p(Views)`) en el pipeline de experimentación iterativa de la Etapa III.
 
-1. [Contexto y objetivo](#-contexto-y-objetivo)
-2. [Preguntas que responde el proyecto](#-preguntas-que-responde-el-proyecto)
-3. [Estructura del repositorio](#-estructura-del-repositorio)
-4. [Datos](#-datos)
-5. [Metodología](#-metodología)
-6. [Resultados de modelado](#-resultados-de-modelado)
-7. [Instalación y uso](#-instalación-y-uso)
-8. [Archivos generados](#-archivos-generados)
-9. [Reproducibilidad y buenas prácticas](#-reproducibilidad-y-buenas-prácticas)
-10. [Hoja de ruta MLOps](#-hoja-de-ruta-mlops)
-11. [Limitaciones](#-limitaciones)
-12. [Referencias principales](#-referencias-principales)
+### Pregunta Secundaria (Clasificación)
+> **¿Es posible clasificar con alta precisión y probabilidades bien calibradas si un video superará la mediana de popularidad del dataset a partir de sus características de interacción en comentarios y contenido?**
 
----
+* **Objetivo:** Desarrollar, ensamblar y calibrar un clasificador binario que categorice los videos en alta frente a baja popularidad.
+* **Variable Objetivo:** `es_popular` ($1$ si $\text{Views} > \text{mediana}$, $0$ en caso contrario).
 
-## 🎯 Contexto y objetivo
+## Metodología y Evolución del Pipeline
 
-El objetivo es construir un modelo de **procesamiento de lenguaje natural (NLP)** que estime el desempeño de un video de YouTube
-(vistas, *likes*) a partir de los **comentarios** de su audiencia, y que culmine como un modelo consumible por un usuario (interfaz y/o API),
-siguiendo pautas de **MLOps**: manejo correcto de los datos, modelo en la nube y capacidad de monitoreo.
+### Etapas I y II: Línea Base y Diagnóstico (`analisis.py`)
+1. **Procesamiento de Comentarios y Sentimiento:** Agrupación por video para calcular volumen de comentarios, likes en comentarios y puntajes de sentimiento con **VADER** (*Valence Aware Dictionary and sEntiment Reasoner*).
+2. **Prevención de Fuga de Información (*Data Leakage*):** Separación entre escenarios con métricas contemporáneas (`Likes` del video) y escenarios realistas basados únicamente en señales de comentarios, antigüedad, texto del título y nicho temático (`Escenario B`).
+3. **Esquema de Validación:** Validación cruzada estratificada y pipelines `ColumnTransformer` + `Pipeline` de Scikit-Learn.
 
-- **Semana 7 – Avances I:** énfasis en los **datos** (calidad, suficiencia, acceso, variables predictivas y análisis estadísticos no triviales).
-- **Semana 8 – Avances II:** énfasis en el **modelo** (análisis estadísticos, modelo seleccionado, desempeño y métricas, herramientas,
-  cantidad de modelos probados y selección de variables).
+### Etapa III: Experimentación Iterativa y Selección Estadística (`iteracion.py`)
+El script [iteracion.py](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fiteracion.py) estructura el refinamiento sobre $N = 1,867$ videos válidos a través de **6 iteraciones formales (`I0`–`I6`)**, evaluando 17 modelos de regresión (87 configuraciones) y 8 modelos de clasificación:
 
-## ❓ Preguntas que responde el proyecto
+| Iteración | Enfoque Metodológico | Modelos de Regresión (`R0`–`R16`) | Modelos de Clasificación (`C0`–`C7`) |
+| :--- | :--- | :--- | :--- |
+| **I0** | **Línea Base (Etapa II)** | `R0`: `DummyRegressor` (mediana)<br>`R1`: `RidgeCV`<br>`R2`: `GradientBoosting` (`GridSearchCV`)<br>`R3`: Híbrido `B + TF-IDF + RidgeCV` | `C0`: `DummyClassifier`<br>`C1`: `LogisticRegression`<br>`C2`: `GradientBoosting` (`GridSearchCV`) |
+| **I1** | **Ablación e Importancia por Permutación** | `R4`: `HistGradientBoosting` base<br>`R5`: `HGB` sin likes de comentarios<br>`R6`: `Ridge` sin likes de comentarios | `C3`: `LogisticRegression` sin likes de comentarios |
+| **I2** | **Selección Formal de Variables** | `R7`: `HGB` + `LassoCV` (`SelectFromModel`)<br>`R8`: `HGB` + `SelectKBest` (Info. Mutua, $k=15$) | — |
+| **I3** | **Ingeniería de Variables y Reducción LSA** | `R9`: `HGB` + 10 variables nuevas<br>`R10`: `Ridge` + 10 variables nuevas<br>`R11`: `HGB` + nuevas + LSA (`TruncatedSVD`, 50 comp.) | `C4`: `HGB` fijo + 10 variables nuevas |
+| **I4** | **Optimización Aleatoria y Boosting Avanzado** | `R12`: `HGB` afinado (`RandomizedSearchCV`)<br>`R13`: `LightGBM` + variables nuevas<br>`R14`: `XGBoost` + variables nuevas (**Ganador**) | `C5`: `HGB` afinado (`RandomizedSearchCV`) + nuevas |
+| **I5** | **Ensambles y Apilamiento (*Stacking*)** | `R15`: Promedio (`HGB + Ridge + Híbrido`)<br>`R16`: Apilado (`HGB + Ridge + Híbrido` $\rightarrow$ reg. no negativa) | `C7`: Apilado (`LR + HGB + TF-IDF LR`) (**Ganador**) |
+| **I6** | **Calibración e Intervalos Cuantílicos** | `QuantileRegressor` (intervalos de predicción al 80% nominal) | `C6`: `CalibratedClassifierCV` (isotónica) sobre `HGB` |
 
-| Informe | Pregunta guía | Dónde se responde |
-|---|---|---|
-| Avances I | ¿Cómo se accede a los datos y son suficientes? ¿Cómo mejorarlos? | Secciones *Acceso y descripción*, *Calidad* y *Suficiencia* |
-| Avances I | ¿Qué variables podemos predecir (vistas, likes)? | *Identificación de variables y predicciones* |
-| Avances I | ¿Qué análisis estadísticos no triviales podemos extraer? | *Análisis estadísticos no triviales* |
-| Avances II | ¿Qué modelo se seleccionó, con qué desempeño y métricas? | *Resultados* y *Modelo seleccionado* |
-| Avances II | ¿Cuántos modelos se probaron y con qué herramientas? | *Diseño experimental* y *Modelos evaluados* |
-| Avances II | ¿Es suficiente un solo modelo? ¿Qué variables se usaron? | *¿Es suficiente un solo modelo?* e *Importancia de variables* |
+#### Nuevas Características Incorporadas en la Etapa III (27 Predictores)
+Además de las 16 variables base (`n_com`, `sent_mean`, `sent_std`, `pos_share`, `neg_share`, `neu_share`, `sent_w`, `clike_mean`, `clike_max`, `len_mean`, `words_mean`, `vader_mean`, `vader_std`, `q_share`, `excl_share`, `upper_share`, `age_days`) y la categoría `Keyword`, la iteración `I3` incorpora 10 predictores léxicos y de sentimiento extremo:
+* **Atributos del Título:** `title_len` (longitud del título), `title_vader` (polaridad VADER del título), `title_q` (presencia de signos de interrogación en el título).
+* **Extremos e Intensidad Emocional en Comentarios:** `vader_max`, `vader_min`, `strong_pos` (proporción de comentarios altamente positivos) y `strong_neg` (proporción de comentarios altamente negativos).
+* **Riqueza Léxica y Expresividad:** `lex_div` (diversidad léxica tipo *type-token ratio*) y `emoji_share` (proporción de comentarios con emojis).
 
-## 🗂️ Estructura del repositorio
+#### Criterios Estadísticos de Selección de Modelos
+* **Prueba $t$ corregida de Nadeau y Bengio (2003):** Evalúa la significancia estadística de las mejoras entre iteraciones corrigiendo la correlación entre pliegues de validación cruzada repetida ($2 \times 5$).
+* **Regla de 1 Error Estándar (1-SE Rule, Hastie et al., 2009):** Entre los modelos cuyo desempeño se ubica dentro de un error estándar del mínimo RMSE (o máximo AUC-ROC), selecciona la alternativa de menor complejidad estructural.
 
-```text
-.
-├── data/                    # CSV de entrada (videos-stats.csv, comments.csv)
-├── salida/                  # Resultados generados: results.json, figuras, modelo e informes
-├── analisis.py              # Pipeline de análisis: calidad, estadística, modelos
-├── informes.py              # Generador de informes APA 7 desde la plantilla + results.json
-├── Plantilla_APA7.docx      # Plantilla de formato APA 7 (Times New Roman 12, interlineado doble)
-├── requirements.txt         # Dependencias de Python
-├── LEEME.md                 # Instrucciones breves de ejecución
-└── README.md                # Este documento
-```
+## Resultados Principales
 
-## 🧾 Datos
+### 1. Resultados de la Etapa III (`salida/results_iii.json`)
 
-Se utiliza el conjunto público **YouTube Statistics** de Kaggle ([advaypatil/youtube-statistics](https://www.kaggle.com/datasets/advaypatil/youtube-statistics)),
-compuesto por dos archivos relacionados por `Video ID`:
+#### Regresión — Variable Objetivo: $\ln(\text{Views} + 1)$ (Escenario B sin *Likes* del video)
 
-| Archivo | Variables |
-|---|---|
-| `videos-stats.csv` | `Title`, `Video ID`, `Published At`, `Keyword`, `Likes`, `Comments`, `Views` |
-| `comments.csv` | `Video ID`, `Comment`, `Likes`, `Sentiment` (0 = negativo, 1 = neutro, 2 = positivo) |
+| ID | Modelo | Iteración | RMSE (CV) | MAE (CV) | $R^2$ (CV) | $\rho$ Spearman |
+| :--- | :--- | :--- | :---: | :---: | :---: | :---: |
+| `R0` | Referencia (`DummyRegressor`) | `I0` | 2.487 | 2.002 | -0.003 | — |
+| `R1` | `RidgeCV` - B (Etapa II) | `I0` | 1.245 | 0.885 | 0.748 | — |
+| `R2` | `GradientBoosting` (`GridSearchCV`, Etapa II) | `I0` | 1.242 | 0.900 | 0.749 | — |
+| `R3` | Híbrido `B + TF-IDF + RidgeCV` (Etapa II) | `I0` | 1.217 | 0.872 | 0.759 | — |
+| **`R14`** | **`XGBoost + nuevas` (Modelo Elegido)** | **`I4`** | **1.191 ($\pm$ 0.062)** | **0.877** | **0.769 ($\pm$ 0.025)** | **0.876** |
 
-> **Nota:** respete la licencia y los términos de uso del conjunto en Kaggle. Los datos se tratan como de solo lectura y cada archivo
-> queda registrado con su huella **SHA-256** en `results.json` para garantizar trazabilidad.
+* **Decisión por Regla 1-SE:** El modelo **`XGBoost + nuevas` (`R14`)** alcanza el menor error (**RMSE = `1.191`**, **$R^2$ = `0.769`**) con menor complejidad estructural que los ensambles `Promedio (HGB + Ridge + Híbrido)` (`R15`) y `Apilado` (`R16`), ubicándose bajo el umbral 1-SE (`1.211`, $\text{SE} = 0.020$).
+* **Intervalos de Predicción (`I6`):** Mediante regresión cuantílica (`QuantileRegressor`) para un nivel nominal del **80%**, se obtuvo una **cobertura empírica del `71.1%` ($\pm 2.0\%$)** con un ancho medio de `2.621` unidades logarítmicas y baja heterocedasticidad residual ($\rho = -0.061$).
 
-## 🧪 Metodología
+#### Clasificación — Variable Objetivo: `es_popular` ($\text{Views} > \text{mediana}$)
 
-```mermaid
-flowchart LR
-    A[CSV de Kaggle] --> B[Calidad de datos<br/>y limpieza]
-    B --> C[Ingeniería de variables<br/>agregación por video]
-    C --> D[Estadística no trivial<br/>y suficiencia]
-    C --> E[Modelado y validación<br/>cruzada repetida]
-    D --> F[(results.json)]
-    E --> F
-    E --> G[modelo_final.joblib]
-    F --> H[informes.py]
-    H --> I[Informes APA 7<br/>Avances I y II]
-```
+| ID | Modelo | Iteración | Accuracy | F1-Score | AUC-ROC | Brier Score | ECE |
+| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| `C0` | Referencia (`DummyClassifier`) | `I0` | 50.0% | 0.000 | 0.500 | 0.500 | 0.500 |
+| `C1` | `LogisticRegression` - B (Etapa II) | `I0` | 86.1% | 0.862 | 0.934 ($\pm$ 0.010) | 0.101 | 0.042 |
+| `C2` | `GradientBoosting` (`GridSearchCV`, Etapa II) | `I0` | 85.9% | 0.860 | 0.935 ($\pm$ 0.006) | 0.103 | 0.045 |
+| `C3` | `LogisticRegression` sin likes de comentarios | `I1` | 81.7% | 0.820 | 0.900 ($\pm$ 0.011) | 0.127 | 0.048 |
+| `C4` | `HGB` fijo + variables nuevas | `I3` | 85.1% | 0.852 | 0.935 ($\pm$ 0.007) | 0.102 | 0.039 |
+| `C5` | `HGB` afinado (`RandomizedSearchCV`) + nuevas | `I4` | 84.8% | 0.849 | 0.931 ($\pm$ 0.009) | 0.105 | 0.039 |
+| `C6` | `HGB` calibrado (isotónica) + nuevas | `I6` | 85.0% | 0.853 | 0.930 ($\pm$ 0.006) | 0.108 | 0.054 |
+| **`C7`** | **`Apilado (LR + HGB + TF-IDF LR)` (Elegido)** | **`I5`** | **86.7%** | **0.865** | **0.939 ($\pm$ 0.008)** | **0.102** | **0.076** |
 
-### 1. Calidad de datos (Avances I)
-Indicadores de **completitud, unicidad, validez, consistencia y cobertura** (marco de Wang & Strong, 1996), validación de la etiqueta de
-sentimiento contra **VADER** (κ de Cohen), análisis de asimetría y transformación logarítmica (Box-Cox).
+* **Impacto de la Ablación (`I1`):** Eliminar las métricas de likes en comentarios (`C3`) reduce el AUC-ROC de `0.934` a `0.900`, confirmando el alto valor predictivo de la aprobación comunitaria en los comentarios.
+* **Modelo Ganador de Clasificación (`C7`):** El ensamble apilado que integra regresión logística tabular, `HistGradientBoosting` y regresión logística sobre n-gramas TF-IDF del título alcanza el mayor poder discriminativo (**AUC-ROC = `0.939`**, **Precisión = `87.5%`**, **Especificidad = `87.8%`**), superando el umbral 1-SE (`0.937`).
 
-### 2. Suficiencia
-Cociente de muestras por parámetro, **potencia estadística** (correlación mínima detectable) y **curva de aprendizaje** (R² frente al tamaño de entrenamiento).
+### 2. Referencia Histórica de la Etapa II (Escenario con Métricas Completas en $\log_{10}\text{Views}$)
+* **Regresión (Gradient Boosting Regressor):** $R^2$ CV = `0.852`, RMSE CV = `0.341` unidades $\log_{10}$ ($R^2$ Test = `0.858`, RMSE Test = `0.334`, MAE Test = `0.239`).
+* **Clasificación (Random Forest Classifier):** Accuracy = `91.2%`, AUC-ROC = `0.965`, F1-Score = `0.912`.
 
-### 3. Análisis estadísticos no triviales
-- Correlación de **Spearman** con intervalos **bootstrap** y control de la tasa de falsos descubrimientos (**Benjamini-Hochberg**).
-- **Correlación parcial** controlando la antigüedad del video.
-- **Kruskal-Wallis** por categoría (tamaño de efecto ε²) y **V de Cramér** (categoría × sentimiento).
-- Detección de la **paradoja de Simpson** y del **sesgo de selección** de comentarios.
-- Prueba *t* remuestreada corregida (**Nadeau & Bengio**) para comparar modelos y **importancia por permutación**.
+## Requisitos e Instalación
 
-### 4. Variables
+El proyecto requiere **Python 3.10+** (probado y ejecutado en **Python 3.14.7** con `scikit-learn 1.9.1`, `lightgbm 4.7.0` y `xgboost 3.4.1`).
 
-| Grupo | Contenido |
-|---|---|
-| **A – Comentarios** | Proporciones y media de sentimiento, sentimiento ponderado por likes, VADER, número de comentarios, likes del comentario, longitud, `?`, `!`, mayúsculas |
-| **B – Metadatos** | A + categoría (`Keyword`), antigüedad, longitud y sentimiento del título |
-| **Texto** | TF-IDF de unigramas y bigramas (hasta 20 000 términos) |
-| **Híbrido** | B + TF-IDF |
-
-**Objetivos:** `log(1 + Views)` (principal), `log(1 + Likes)` y clase de **alta popularidad** (sobre la mediana de log Views).
-`Likes` y `Comments` del video se excluyen como predictores de `Views` por circularidad.
-
-### 5. Modelos y evaluación
-
-| Tarea | Modelos |
-|---|---|
-| **Regresión** (9) | Referencia (mediana) · Ridge A/B · Bosque aleatorio A/B · Gradient Boosting A/B · TF-IDF + Ridge · Híbrido B + TF-IDF + Ridge |
-| **Clasificación** (6) | Referencia · Reg. logística A/B · Bosque aleatorio B · Gradient Boosting B · TF-IDF + Reg. logística |
-
-- Validación cruzada **repetida** (5 particiones) con *pipelines* de scikit-learn: el preprocesamiento se ajusta solo con datos de entrenamiento (**sin fuga de información**).
-- Hiperparámetros con búsqueda en malla **anidada** (3 particiones).
-- **Regresión:** RMSE, MAE, R², ρ de Spearman. **Clasificación:** exactitud, exactitud balanceada, F1, AUC, precisión, sensibilidad, especificidad y matriz de confusión.
-
-## 📈 Resultados de modelado
-
-Resumen de la ejecución completa (validación cruzada repetida; error en unidades de `log(1 + Views)`):
-
-| Modelo de regresión | RMSE | R² |
-|---|---:|---:|
-| Referencia (mediana) | 2,487 | −0,003 |
-| Ridge – A (comentarios) | 1,627 | 0,569 |
-| Bosque aleatorio – A | 1,621 | 0,572 |
-| Gradient Boosting – A | 1,618 | 0,574 |
-| Ridge – B (+ metadatos) | 1,248 | 0,747 |
-| Bosque aleatorio – B | 1,299 | 0,725 |
-| Gradient Boosting – B | 1,249 | 0,746 |
-| TF-IDF + Ridge (solo texto) | 1,964 | 0,374 |
-| **Híbrido B + TF-IDF + Ridge** | **1,222** | **0,757** |
-
-| Modelo de clasificación (alta popularidad) | AUC | Exactitud |
-|---|---:|---:|
-| Referencia (clase mayoritaria) | 0,500 | 0,500 |
-| Reg. logística – A | 0,873 | 0,798 |
-| Reg. logística – B | 0,934 | 0,861 |
-| Bosque aleatorio – B | 0,929 | 0,838 |
-| **Gradient Boosting – B** | **0,935** | 0,859 |
-| TF-IDF + Reg. logística | 0,797 | 0,721 |
-
-> ⚠️ **Lectura crítica:** parte de la señal puede provenir de que los *likes* de los comentarios destacados crecen con el tamaño de la audiencia
-> (un reflejo indirecto de las vistas). Las diferencias entre los mejores modelos son pequeñas, por lo que la elección final se contrasta con la
-> prueba estadística corregida y se justifica también por simplicidad e interpretabilidad. Consulte el informe de Avances II y `salida/results.json`
-> para las cifras definitivas, las pruebas de significación y la importancia por permutación.
-
-## ⚙️ Instalación y uso
-
-**Requisitos:** Python 3.10 o superior.
-
+### 1. Clonar el repositorio
 ```bash
-# 1. Clonar el repositorio
 git clone https://github.com/Truder3105/Tarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-.git
 cd Tarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-
-
-# 2. (Opcional) crear entorno virtual
-python -m venv .venv
-.venv\Scripts\activate          # Windows
-# source .venv/bin/activate     # Linux / macOS
-
-# 3. Instalar dependencias
-pip install -r requirements.txt
-
-# 4. Ejecutar el análisis (usa los CSV de la carpeta data/)
-python analisis.py --data data --out salida
-#    Prueba rápida (menos árboles/repeticiones, solo para verificar):
-python analisis.py --data data --out salida --rapido
-
-# 5. Generar los informes APA 7 en Word
-python informes.py --plantilla Plantilla_APA7.docx --salida salida
 ```
 
-Antes del paso 5, edite el bloque `CONFIG` de `informes.py` con los datos de portada (integrantes, universidad, curso, docente y fechas).
-Luego abra los `.docx` en Word, revíselos y expórtelos a **PDF**, formato exigido para la entrega.
+### 2. Crear y activar un entorno virtual
+```bash
+python3 -m venv venv
+source venv/bin/activate        # En Linux/macOS
+# venv\Scripts\activate          # En Windows
+```
 
-> La ejecución completa puede tardar varios minutos por las búsquedas de hiperparámetros anidadas.
+### 3. Instalar dependencias
+Instale las librerías base de [requirements.txt](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Frequirements.txt) y los paquetes de gradient boosting utilizados en la Etapa III:
+```bash
+pip install -r requirements.txt
+pip install lightgbm xgboost
+```
 
-## 📦 Archivos generados
+## Ejecución del Proyecto
 
-| Archivo (en `salida/`) | Descripción |
-|---|---|
-| `results.json` | Todas las cifras del análisis (calidad, estadística, modelos, importancia, huellas SHA-256) |
-| `fig_*.png` | Figuras de los informes (distribuciones, Spearman, curva de aprendizaje, comparación de modelos, matriz de confusión, importancia) |
-| `Avances_I_YouTube_APA7.docx` | Informe de la semana 7 en formato APA 7 |
-| `Avances_II_YouTube_APA7.docx` | Informe de la semana 8 en formato APA 7 |
-| `modelo_final.joblib` | Mejor regresor reentrenado con todos los datos |
-| `modelo_metadata.json` | Variables de entrada, fecha, métricas de validación y semilla del modelo |
+El flujo completo consta de tres pasos modulares que admiten parámetros por línea de comandos:
 
-## 🔁 Reproducibilidad y buenas prácticas
+### Paso 1: Ejecutar el Análisis Base (Etapas I y II)
+```bash
+python3 analisis.py --data data --out salida
+```
+* **Modo de prueba rápida:** Añada `--rapido` para reducir el número de iteraciones en mallas de búsqueda.
+* **Salida:** Procesa [data/videos-stats.csv](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fdata%2Fvideos-stats.csv) y [data/comments.csv](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fdata%2Fcomments.csv), guarda métricas en `salida/results.json`, serializa `salida/modelo_final.joblib` y genera las figuras `fig_*.png`.
 
-- **Semilla fija (42)** y particiones deterministas.
-- **Sin fuga de información:** imputación, escalado, codificación y TF-IDF dentro del *pipeline* de cada partición.
-- **Las cifras de los informes no se escriben a mano:** provienen de `results.json`.
-- **Trazabilidad de datos:** huella SHA-256 de los archivos de origen.
-- **Modelo versionado** con metadatos para su auditoría.
+### Paso 2: Ejecutar la Experimentación Iterativa (Etapa III)
+```bash
+python3 iteracion.py --data data --out salida
+```
+* **Modo de prueba rápida:** Añada `--rapido` para validación rápida del pipeline.
+* **Salida:** Ejecuta las iteraciones `I0` a `I6`, realiza pruebas estadísticas de Nadeau-Bengio y selección 1-SE, serializa el mejor pipeline en [salida/modelo\_final\_iii.joblib](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Fmodelo_final_iii.joblib), exporta metadatos en [salida/modelo\_iii\_metadata.json](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Fmodelo_iii_metadata.json), registra todos los resultados en [salida/results\_iii.json](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FTruder3105%2FTarea-informe-de-trabajo-Proyecto-estadisticas-de-Youtube-Avances-II-%2Fblob%2Fmain%2Fsalida%2Fresults_iii.json) y genera las 6 figuras `salida/fig3_*.png`.
 
-## 🚀 Hoja de ruta MLOps
+## Estructura de los Informes Generados (Norma APA 7)
 
-- [x] Pipeline reproducible de datos, modelado y reporte
-- [x] Modelo serializado con metadatos
-- [ ] API de inferencia con **FastAPI** dentro de un contenedor **Docker**
-- [ ] Despliegue en un servicio en la nube
-- [ ] Registro de predicciones y **monitoreo** (cambio en la distribución de entradas mediante PSI, error cuando se conozca el valor real)
-- [ ] Alertas y reentrenamiento programado
-- [ ] Recolección propia con **YouTube Data API v3** (muestreo estratificado, múltiples capturas por video)
+Los documentos generados en `salida/` cumplen con las directrices de presentación académica APA 7:
+1. **Página de Título Institucional:** Título del informe, autores, afiliación, asignatura, docente y fecha.
+2. **Resumen y Palabras Clave:** Síntesis ejecutiva del problema, diseño experimental y hallazgos cuantitativos.
+3. **Introducción y Justificación:** Contexto del problema, formulación de preguntas e hipótesis por iteración.
+4. **Método y Diseño Experimental:** Descripción del corpus (Patil, s. f.), ingeniería de variables con VADER y TF-IDF/LSA, arquitectura sin fuga de datos, protocolo de validación cruzada y criterios estadísticos (Nadeau & Bengio, 2003; regla 1-SE).
+5. **Resultados y Diagnóstico:** Tablas comparativas de las iteraciones `I0`–`I6`, pruebas de ablación, análisis por subgrupos temáticos (`Keyword`), intervalos de predicción cuantílicos y curvas de calibración.
+6. **Discusión y Conclusiones:** Interpretación de hallazgos, limitaciones metodológicas y recomendaciones prácticas.
+7. **Referencias Bibliográficas:** Citaciones normalizadas en APA 7 (Breiman, 2001; Bergstra & Bengio, 2012; Chen & Guestrin, 2016; Guyon & Elisseeff, 2003; Hastie et al., 2009; Ke et al., 2017; Koenker & Bassett, 1978; Nadeau & Bengio, 2003; Tibshirani, 1996; Wolpert, 1992).
 
-## ⚠️ Limitaciones
+## Licencia y Créditos
 
-- Los comentarios del conjunto son una muestra de los más relevantes, no la totalidad; el protocolo de muestreo de videos no está documentado.
-- Instantánea única: no se separa el efecto del tiempo del efecto del contenido.
-- La etiqueta de sentimiento es ruidosa respecto de VADER, calibrado para inglés.
-- Las relaciones son **asociativas, no causales**: los comentarios aparecen después de recibir vistas, por lo que el modelo sirve para diagnóstico y señal temprana, no como pronóstico causal.
-
-## 📚 Referencias principales
-
-- Alemán Viteri, S. B. (2021). Análisis de sentimientos para Twitter con Vader y TextBlob. *Revista Odigos, 2*(3), 9–25. https://doi.org/10.35290/ro.v2n3.2021.494
-- Benjamini, Y., & Hochberg, Y. (1995). Controlling the false discovery rate. *Journal of the Royal Statistical Society: Series B, 57*(1), 289–300.
-- Breiman, L. (2001). Random forests. *Machine Learning, 45*(1), 5–32.
-- Hutto, C., & Gilbert, E. (2014). VADER: A parsimonious rule-based model for sentiment analysis of social media text. *ICWSM, 8*(1), 216–225.
-- Nadeau, C., & Bengio, Y. (2003). Inference for the generalization error. *Machine Learning, 52*(3), 239–281.
-- Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in Python. *Journal of Machine Learning Research, 12*, 2825–2830.
-- Sculley, D., et al. (2015). Hidden technical debt in machine learning systems. *NeurIPS, 28*, 2503–2511.
-- Patil, A. (s. f.). *YouTube statistics* [Conjunto de datos]. Kaggle.
-
-La lista completa en formato APA 7 está en los informes.
-
----
-
-<p align="center"><sub>Universidad de Cundinamarca · Inteligencia Artificial · Procesamiento de Lenguaje Natural · 2026</sub></p>
+* **Dataset Fuente:** YouTube Statistics Dataset (Patil, s. f., Kaggle: `advaypatil/youtube-statistics`).
+* **Desarrollo:** Proyecto académico de analítica de datos y aprendizaje automático.
